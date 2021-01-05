@@ -55,6 +55,11 @@ sub run {
     set_scc_proxy_url;
 
     disable_installation_repos;
+    #open(OUT, ">>/etc/resolv.conf");
+    #assert_script_run("print OUT 'nameserver 8.8.8.8'");
+    #close OUT;
+    assert_script_run("netconfig -f update");
+    assert_script_run("cat /etc/resolv.conf");
 
     # according to comment 19 of bsc#985647, uninstall all kgraft-patch* packages prior to migration as a workaround to
     # solve conflict during online migration with live patching addon

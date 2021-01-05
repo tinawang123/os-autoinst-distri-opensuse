@@ -46,11 +46,10 @@ sub configure_static_ip {
     my $net_conf = parse_network_configuration();
     my $mac      = $net_conf->{fixed}->{mac};
     $mtu //= 1458;
-    script_run "NIC=`grep $mac /sys/class/net/*/address |cut -d / -f 5`";
+    script_run "NIC=`grep $mac /sys/class/net/*/address |cut -d / -f 5 | head -1`";
     assert_script_run "echo \$NIC";
     my ($ip_no_mask, $mask) = split('/', $ip);
     script_run "arping -w 1 -I \$NIC $ip_no_mask";    # check for duplicate IP
-
     assert_script_run "echo \"STARTMODE='auto'\nBOOTPROTO='static'\nIPADDR='$ip'\nMTU='$mtu'\" > /etc/sysconfig/network/ifcfg-\$NIC";
     save_screenshot;
     assert_script_run "rcnetwork restart";

@@ -51,6 +51,7 @@ sub run {
     script_run "net ads join -U Administrator", quiet => 1;
     wait_serial "Set Administrator's password:";
     type_string "N0tS3cr3t@\n";
+    systemctl('enable smb nmb winbind');
     systemctl('restart smb nmb winbind');
     #systemctl('restart nmb');
     #systemctl('restart winbind');
