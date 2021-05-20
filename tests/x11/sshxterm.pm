@@ -27,6 +27,8 @@ sub run {
     my ($self) = @_;
     mouse_hide(1);
     x11_start_program('xterm');
+    #script_output('ll /home/bernhard/.ssh/id_rsa');
+    script_output('cat /home/bernhard/.ssh/id_rsa');
     enter_cmd("ssh -o StrictHostKeyChecking=no -XC root\@localhost xterm");
     assert_screen "ssh-second-xterm";
     $self->set_standard_prompt();

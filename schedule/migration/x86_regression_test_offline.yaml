@@ -16,10 +16,8 @@ schedule:
   - boot/boot_to_desktop
   - update/patch_sle
   - migration/record_disk_info
-  - '{{install_service}}'
   - migration/reboot_to_upgrade
   - migration/version_switch_upgrade_target
-  - '{{isosize_test}}'
   - installation/bootloader
   - installation/welcome
   - installation/upgrade_select
@@ -41,8 +39,6 @@ schedule:
   - console/system_state
   - console/prepare_test_data
   - console/consoletest_setup
-  - '{{check_upgraded_service}}'
-  - migration/openldap_to_389ds
   - '{{regression_tests}}'
   - boot/grub_test_snapshot
   - migration/version_switch_origin_system
@@ -97,10 +93,10 @@ conditional_schedule:
         - console/upgrade_snapshots
         - console/zypper_lifecycle
         - console/consoletest_finish
+        - x11/sshxterm
         - x11/desktop_runner
         - x11/xterm
         - locale/keymap_or_locale_x11
-        - x11/sshxterm
         - x11/gnome_control_center
         - x11/gnome_terminal
         - x11/gedit
