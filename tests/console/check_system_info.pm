@@ -82,7 +82,7 @@ sub run {
     script_run('zypper lr | tee /tmp/zypperlr.txt');
 
     # Check the expected addons before migration
-    if (check_var('VERSION', get_required_var('ORIGIN_SYSTEM_VERSION')) && !get_var("MEDIA_UPGRADE")) {
+    if (check_var('VERSION', get_required_var('ORIGIN_SYSTEM_VERSION')) && !get_var("MEDIA_UPGRADE") && (get_var("ORIGIN_SYSTEM_VERSION") !~ /leap/)) {
         my $addons = get_var('SCC_ADDONS', "");
         $addons =~ s/ltss,?//g;
         check_addons($addons);

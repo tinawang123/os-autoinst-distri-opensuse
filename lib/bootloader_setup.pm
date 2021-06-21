@@ -883,7 +883,7 @@ sub select_bootmenu_language {
 
 sub tianocore_enter_menu {
     # we need to reduce this waiting time as much as possible
-    my $counter = 300;
+    my $counter = 3000;
     while (!check_screen('tianocore-mainmenu', 0, no_wait => 1) && $counter--) {
         send_key 'f2';
         sleep 0.1;

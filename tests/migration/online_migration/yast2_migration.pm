@@ -224,6 +224,11 @@ sub run {
     if (match_has_tag 'yast2-migration-installupdate') {
         send_key 'alt-y';
     }
+    assert_screen 'yast2_migration-license-agreement', 60;
+    wait_screen_change { send_key "alt-a" };
+    assert_screen 'yast2_migration-license-agreenment-accepted';
+    send_key "alt-n";
+
     if (yast2_migration_gnome_x11) {
         yast2_migration_handle_conflicts_x11($self);
     }

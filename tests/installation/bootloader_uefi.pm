@@ -56,7 +56,7 @@ sub run {
     # Case setting also need BOOT_MENU=1 to support it
     if (is_sle && get_required_var('FLAVOR') =~ /Migration/ && check_var('ARCH', 'x86_64')) {
         # Skip workaround on specific scenaio which call this module after migration
-        if (!check_screen('bootloader-grub2', 0, no_wait => 1)) {
+        if (!check_screen('bootloader-grub2', 20, no_wait => 0)) {
             record_soft_failure 'bsc#1180080';
             tianocore_select_bootloader;
             send_key_until_needlematch("ovmf-boot-HDD", 'down', 5, 1);
@@ -107,7 +107,7 @@ sub run {
         send_key_until_needlematch 'inst-bootmenu-boot-harddisk', 'up';
         send_key 'ret';
         # use firmware boot manager of aarch64 to boot HDD
-        $self->handle_uefi_boot_disk_workaround if (check_var('ARCH', 'aarch64'));
+        $self->handle_uefi_boot_disk_workaround if (check_var('ARCH', 'aarch64') || get_var('UEFI'));
         assert_screen("grub2");
         return;
     }
