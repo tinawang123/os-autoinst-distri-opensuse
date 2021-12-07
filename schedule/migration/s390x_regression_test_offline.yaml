@@ -17,7 +17,7 @@ schedule:
   - boot/boot_to_desktop
   - update/patch_sle
   - migration/record_disk_info
-  - '{{install_service}}'
+    #  - '{{install_service}}'
   - migration/reboot_to_upgrade
   - migration/version_switch_upgrade_target
   - installation/bootloader_zkvm
@@ -41,9 +41,10 @@ schedule:
   - console/system_state
   - console/prepare_test_data
   - console/consoletest_setup
-  - '{{check_upgraded_service}}'
-  - '{{openldap_to_389ds}}'
-  - '{{regression_tests}}'
+  - x11/firefox
+    #- '{{check_upgraded_service}}'
+    #- '{{openldap_to_389ds}}'
+    #- '{{regression_tests}}'
 conditional_schedule:
   check_upgraded_service:
     REGRESSION_SERVICE:
