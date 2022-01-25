@@ -13,7 +13,9 @@ use power_action_utils 'power_action';
 use utils;
 
 sub run {
-    power_action('poweroff');
+	#power_action('poweroff');
+    select_console('root-console');
+    enter_cmd "poweroff";
 }
 
 sub test_flags {

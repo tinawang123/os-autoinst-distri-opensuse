@@ -113,7 +113,10 @@ sub run {
         my $timeout = is_aarch64 ? '1000' : '500';
         assert_screen(\@welcome_tags, $timeout);
         # Normal exit condition
-        if ((match_has_tag 'inst-betawarning') || (match_has_tag 'inst-welcome') || (match_has_tag 'inst-welcome-no-product-list')) {
+        if ((match_has_tag 'inst-betawarning') || (match_has_tag 'inst-welcome') || (match_has_tag 'inst-welcome-no-product-list')) { 
+            send_key 'alt-a';
+	    wait_still_screen 2;
+	    send_key 'alt-n';
             last;
         }
         if (match_has_tag 'scc-invalid-url') {

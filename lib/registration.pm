@@ -947,7 +947,7 @@ sub process_modules {
             && (check_var('DESKTOP', 'gnome') || check_var('DESKTOP', 'minimalx'))
             && (my $addons = get_var('SCC_ADDONS')) !~ /(?:desktop|we)/) {
             $addons = $addons ? $addons . ',desktop' : 'desktop';
-            set_var('SCC_ADDONS', $addons);
+	    #set_var('SCC_ADDONS', $addons);
         }
     }
 

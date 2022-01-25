@@ -25,14 +25,14 @@ sub run {
     zypper_call("in 389-ds sssd sssd-tools");
     zypper_call('info 389-ds');
     # Install openldap since we need use slaptest tools
-    if (is_sle) {
-        my $openldap = get_required_var("OPENLDAP_PKG");
-        assert_script_run('wget ' . $openldap, 200);
-        my @ldap = split('/', $openldap);
-        assert_script_run 'rpm -i ' . $ldap[-1];
-    } else {
-        zypper_call("in openldap2");
-    }
+    #   if (is_sle) {
+    #    my $openldap = get_required_var("OPENLDAP_PKG");
+    #    assert_script_run('wget ' . $openldap, 200);
+    #    my @ldap = split('/', $openldap);
+    #    assert_script_run 'rpm -i ' . $ldap[-1];
+    #} else {
+    #    zypper_call("in openldap2");
+    #}
     zypper_call("in sssd-ldap openldap2-client");
 
     # Disable and stop the nscd daemon because it conflicts with sssd
