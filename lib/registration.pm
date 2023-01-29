@@ -309,7 +309,7 @@ sub register_addons_cmd {
                 my @ver = split(/\./, scc_version());
                 add_suseconnect_product($name, $ver[0], undef, undef, 300, $retry);
             }
-            elsif (grep(/$name/, keys %ADDONS_REGCODE)) {
+            elsif (grep(/$name/, keys %ADDONS_REGCODE) && !get_var('SMT_URL')) {
                 add_suseconnect_product($name, undef, undef, "-r " . $ADDONS_REGCODE{$name}, 300, $retry);
                 if ($name =~ /we/) {
                     zypper_call("--gpg-auto-import-keys ref");
