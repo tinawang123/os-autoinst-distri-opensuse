@@ -293,6 +293,7 @@ sub start_wake_on_lan {
 
 sub start_directory_server {
     search 'directory server';
+    send_key 'alt-o' if check_screen 'deprecated_info';
     assert_and_click 'yast2_control-center_authentication-server';
     do {
         assert_screen [
