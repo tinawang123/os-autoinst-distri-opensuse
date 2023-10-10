@@ -663,6 +663,7 @@
   <software>
     <instsource/>
     <packages config:type="list">
+      <package>openssh-server</package>
       <package>dconf</package>
       <package>girepository-1_0</package>
       <package>grub2-snapper-plugin</package>
