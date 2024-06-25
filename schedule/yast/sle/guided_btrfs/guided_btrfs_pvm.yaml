@@ -7,6 +7,8 @@ vars:
   HDDSIZEGB: 40
   YUI_REST_API: 1
 schedule:
+  extension_module_selection:
+    - installation/module_registration/register_extensions_and_modules
   system_preparation:
     - console/system_prepare
     - console/force_scheduled_tasks

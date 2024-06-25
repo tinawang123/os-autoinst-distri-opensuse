@@ -20,7 +20,9 @@ schedule:
   add_on_product:
     - installation/add_on_product_installation/accept_add_on_installation
   system_role:
-    - installation/system_role/select_role_text_mode
+    #- installation/system_role/select_role_text_mode
+    #- installation/system_role/select_role_desktop_with_GNOME
+    - installation/system_role/accept_selected_role_SLES_with_GNOME
   software:
     - installation/select_patterns
   system_preparation:
