@@ -117,7 +117,8 @@ sub process_reboot {
             assert_screen 'grub2', 150;
             wait_screen_change { send_key 'ret' };
         }
-        assert_screen 'linux-login', 200;
+	#assert_screen 'linux-login', 200;
+	send_key_until_needlematch('linux-login', 'ret', 20, 10);
 
         # Login & clear login needle
         select_console 'root-console';

@@ -15,6 +15,7 @@ sub run {
     # check the network configuration
     script_run "ip addr show";
     script_run "cat /etc/resolv.conf";
+    script_run "dhcpclient";
 
     # ping
     assert_script_run 'ping -c 1 127.0.0.1';
