@@ -93,6 +93,7 @@ sub run {
         assert_script_run('/usr/share/btrfsmaintenance/btrfs-balance.sh', timeout => 300);
     } else {
         # Ensure the provided services work
+        script_run('btrfs check --force /dev/vda2', timeout => 500);
         assert_script_run('systemctl start btrfs-scrub.service');
         btrfs_await_scrub();
         assert_script_run('systemctl start btrfs-balance.service');
