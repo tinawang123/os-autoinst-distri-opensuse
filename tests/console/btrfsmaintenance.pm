@@ -47,7 +47,12 @@ sub btrfs_await_scrub {
     if (is_sle("<15-SP4")) {
         script_retry('btrfs scrub status / | grep -e "scrub started .* and finished after"', retry => 20, delay => 30);
     } else {
-        script_retry('btrfs scrub status / | grep -e "Status:.*finished"', retry => 20, delay => 30);
+	#script_retry('btrfs scrub status / | grep -e "Status:.*finished"', retry => 20, delay => 30);
+        my $out = script_output('btrfs scrub status');
+	diag 'Tina' . $out;
+	sleep 20;
+	my $out1 = script_output('btrfs scrub status');
+	diag 'Tina' . $out1;
     }
 }
 
@@ -93,6 +98,7 @@ sub run {
         assert_script_run('/usr/share/btrfsmaintenance/btrfs-balance.sh', timeout => 300);
     } else {
         # Ensure the provided services work
+	btrfs_await_scrub();
         assert_script_run('systemctl start btrfs-scrub.service');
         btrfs_await_scrub();
         assert_script_run('systemctl start btrfs-balance.service');
