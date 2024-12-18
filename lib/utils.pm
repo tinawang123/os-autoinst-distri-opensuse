@@ -678,6 +678,8 @@ sub zypper_call {
     }
 
     upload_logs("/tmp/$log") if $log;
+    my $out=script_output('cat /tmp/\$log') if $log;
+    diag 'Tina'.$out if $log;
 
     unless (grep { $_ == $ret } @$allow_exit_codes) {
         upload_logs('/var/log/zypper.log');
@@ -690,6 +692,7 @@ sub zypper_call {
         elsif ($ret == 107) {
             $msg .= " (ZYPPER_EXIT_INF_RPM_SCRIPT_FAILED)\n\nRelated zypper logs:\n";
             script_run('tac /var/log/zypper.log | grep -F -m1 -B100000 "Hi, me zypper" | tac | grep \'RpmPostTransCollector.cc(executeScripts):.* scriptlet failed, exit status\' > /tmp/z107.txt');
+            script_run("tac /tmp/$log | grep 'scriptlet failed, exit status\' > /tmp/z107.txt") if $log;
             $msg .= script_output('cat /tmp/z107.txt') . "\n\n";
         }
         else {
