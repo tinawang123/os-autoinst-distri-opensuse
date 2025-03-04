@@ -13,11 +13,14 @@ use strict;
 use warnings;
 use testapi;
 use utils;
+use registration qw(add_suseconnect_product is_phub_ready get_addon_fullname);
+use version_utils 'is_sle';
 use Utils::Logging 'save_and_upload_systemd_unit_log';
 
 sub run {
     my $self = shift;
     select_console('root-console');
+    add_suseconnect_product(get_addon_fullname('phub'));
     assert_script_run "modprobe mac80211_hwsim radios=2 |& tee /dev/$serialdev";
 
     $self->install_packages;

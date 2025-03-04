@@ -5,6 +5,9 @@ schedule:
   - console/system_prepare
   - console/prepare_test_data
   - console/consoletest_setup
+  - x11/network/hwsim_wpa2_enterprise_setup
+  - x11/network/yast2_network_use_nm
+  - x11/network/NM_wpa2_enterprise
   - x11/disable_screensaver
   - x11/vnc_two_passwords
   - x11/user_defined_snapshot

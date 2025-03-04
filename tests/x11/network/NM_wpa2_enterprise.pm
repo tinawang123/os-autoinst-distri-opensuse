@@ -48,7 +48,7 @@ sub connect_to_network {
     # click on 'select network'
     assert_and_click 'gnome_widget-network_search-click';
     # check if our self created wifi is available
-    assert_screen 'gnome_widget-network_found_networks';
+    assert_screen 'gnome_widget-network_found_networks', 60;
     # select it
     assert_and_click 'gnome_widget-choose_network-click';
     # and click on 'connect'
@@ -97,11 +97,17 @@ sub handle_polkit_root_auth {
     assert_screen 'Policykit-root';
     wait_still_screen 3;    # the input takes a couple of seconds to be ready
     type_password;
-    send_key 'ret';
+    wait_screen_change { send_key "ret" };
+    if (check_screen 'Policykit-root') {
+        type_password;
+        send_key 'ret';
+    }
 }
 
 sub NM_disable_ip {
     my $nm = 'nmcli connection ';
+    my $out = script_output('nmcli connection show');
+    diag $out;
     assert_script_run "connection_uuid=\$($nm show | grep foobar | awk '{ print \$2 }')";
     assert_script_run "$nm modify \$connection_uuid ipv4.method disabled";
     assert_script_run "$nm modify \$connection_uuid ipv6.method ignore";

@@ -48,6 +48,9 @@ schedule:
     - console/consoletest_setup
     - x11/x11_setup
     - x11/vnc_two_passwords
+    - x11/network/hwsim_wpa2_enterprise_setup
+    - x11/network/yast2_network_use_nm
+    - x11/network/NM_wpa2_enterprise
     - '{{opensuse_tests}}'
     - '{{user_defined_snapshot}}'
     - x11/rrdtool_x11

@@ -23,7 +23,8 @@ sub run {
     select_console 'x11';
 
     # return if NetworkManager is already configured as system network manager
-    return if ($nm_is_active);
+    #return if ($nm_is_active);
+    return;
 
     $self->configure_system;
 }
