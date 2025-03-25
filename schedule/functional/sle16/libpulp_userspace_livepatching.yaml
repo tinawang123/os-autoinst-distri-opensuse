@@ -1,0 +1,7 @@
+name:    libpulp_userspace_livepatching 
+description:    >
+    Maintainer: qe-core
+schedule:
+    - installation/bootloader_start
+    - boot/boot_to_desktop
+    - kernel/ulp_openposix
