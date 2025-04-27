@@ -722,6 +722,10 @@ sub handle_scc_popups {
             }
             elsif (match_has_tag("license-agreement")) {
                 send_key 'alt-a';
+                # Use desktop runner to refresh screen
+                record_info('Refresh screen', 'Use desktop runner to refresh screen');
+                wait_screen_change { send_key 'alt-f2' };
+                wait_screen_change { send_key 'esc' };
                 assert_screen('license-agreement-accepted');
                 send_key $cmd{next};
                 next;
