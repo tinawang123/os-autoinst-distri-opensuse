@@ -17,6 +17,7 @@ use qam;
 use LTP::utils;
 use OpenQA::Test::RunArgs;
 use version_utils;
+use Data::Dumper;
 
 sub parse_incident_repo {
     my $incident_id = get_required_var('INCIDENT_ID');
@@ -69,7 +70,7 @@ sub setup_ulp {
     my $repo_args = '';
 
     install_klp_product if is_sle('<16');
-    zypper_call('in libpulp0 libpulp-tools libpulp-load-default');
+    zypper_call('in libpulp0 libpulp-tools libpulp-load-default glibc');
 
     if (get_var('INCIDENT_REPO')) {
         my $repo_data = parse_incident_repo();
@@ -83,6 +84,7 @@ sub setup_ulp {
 
     # Find glibc versions targeted by livepatch package
     my $provides = script_output("zypper -n info --provides $repo_args $packname");
+    diag 'Tina ' . $provides . '****' . $repo_args . $packname;
     my @versions = $provides =~ m/^\s*libc_([^_()]+)_livepatch\d+\.so\(\)\([^)]+\)\s*$/gm;
 
     die "Package $packname contains no libc livepatches"
@@ -92,10 +94,14 @@ sub setup_ulp {
     # get released for multiple SLE service packs and some old targeted glibc
     # versions may be unavailable on the newer service packs.
     my %glibc_map;
+    my $out = script_output("zypper se -s -x -t package glibc");
+    diag 'Tina ' . $out;
     my $glibc_versions = zypper_search('-s -x -t package glibc');
 
+    diag 'Tina ' . $glibc_versions;
     $glibc_map{$$_{version}} = 1 for (@$glibc_versions);
     @versions = grep { defined($glibc_map{$_}) } @versions;
+    diag 'Tina ' . Dumper(@versions);
     die "No livepatchable glibc versions found" unless scalar @versions;
 
     prepare_ltp_env;
