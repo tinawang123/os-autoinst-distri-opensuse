@@ -97,6 +97,11 @@ conditional_schedule:
                 - console/vsftpd
                 - console/year_2038_detection
                 - console/redis
+        VERSION:
+             '16.0':
+                - console/vmstat
+                - console/libjpeg_turbo
+                - console/cifs
     leap_tests:
         LEAP:
             '1':

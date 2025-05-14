@@ -54,7 +54,7 @@ sub config_balance_parameters {
     my @configs = (
         q{'s|BTRFS_BALANCE_MOUNTPOINTS="/"|BTRFS_BALANCE_MOUNTPOINTS="/mnt/raid"|g'},
         q{'s|BTRFS_BALANCE_MUSAGE="3"|BTRFS_BALANCE_MUSAGE="100"|g'},
-        q{'s|BTRFS_BALANCE_DUSAGE="5 10"|BTRFS_BALANCE_DUSAGE="100"|g'}
+        q{'s|BTRFS_BALANCE_DUSAGE="5 10"|BTRFS_BALANCE_DUSAGE="100"|g'},
     );
     my $replace = join(" -e", @configs);
     assert_script_run qq{sed -i -e $replace $cfg_file};

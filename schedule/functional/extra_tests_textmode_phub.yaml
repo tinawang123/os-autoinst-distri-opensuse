@@ -5,7 +5,7 @@ description:    >
 schedule:
     - installation/bootloader_start
     - boot/boot_to_desktop
-    - console/add_phub_extension
+    #- console/add_phub_extension
     - console/vmstat
     - console/libjpeg_turbo
     - console/libgit2

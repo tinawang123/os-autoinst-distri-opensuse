@@ -33,7 +33,7 @@ sub run {
     select_serial_terminal;
 
     # Package 'hostapd' requires PackageHub is available
-    return unless is_phub_ready();
+    return if (!is_phub_ready() && is_sle('<16'));
 
     zypper_call 'in wpa_supplicant hostapd iw dnsmasq unzip dhcp-client';
     assert_script_run 'cd $(mktemp -d)';
