@@ -1,0 +1,11 @@
+name: extra_tests_clamav
+description:    >
+    Maintainer: QE Core.
+    Extract 'prepare_systemd_and_testsuite' module from 'extra_tests_textmode'
+    requirements.
+schedule:
+    - installation/bootloader_start
+    - boot/boot_to_desktop
+    - console/system_prepare
+    - systemd_testsuite/prepare_systemd_and_testsuite
+    - console/zypper_log_packages

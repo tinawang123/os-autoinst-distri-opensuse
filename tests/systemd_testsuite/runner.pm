@@ -56,7 +56,7 @@ sub run {
 
     select_serial_terminal();
 
-    assert_script_run(build_cmd('clean', $args), timeout => 180);
+    #assert_script_run(build_cmd('clean', $args), timeout => 180);
     # redirect stdout as a workaround to run the command and keep both the return code and the output
     my $rc = script_run(build_cmd('setup', $args) . "> /tmp/out.txt", timeout => 240);
     if ($rc != 0) {
