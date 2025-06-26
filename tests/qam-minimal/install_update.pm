@@ -40,7 +40,7 @@ sub run {
     }
     zypper_call('rr 15-SP4-TERADATA-Updates') if get_var('MACHINE') =~ /uefi/ && get_var('FLAVOR') =~ /TERADATA/;
     # yast2-logs for save_y2logs is on 15-SP4 not installed with minimal base system pattern
-    if (is_sle('>=15-SP4')) {
+    if (is_sle('>=15-SP4') && is_sle('<16')) {
         zypper_call('in yast2-logs');
     }
     # do zypper update bsc#1165180
@@ -53,6 +53,9 @@ sub run {
 
     capture_state('before');
 
+    script_retry('curl -k https://ca.suse.de/certificates/ca/SUSE_Trust_Root.crt -o /etc/pki/trust/anchors/SUSE_Trust_Root.crt', timeout => 100, delay => 30, retry => 5);
+    script_retry('pgrep update-ca-certificates', retry => 5, delay => 2, die => 0);
+    assert_script_run 'update-ca-certificates -v';
     # Set and check patch variables
     my $incident_id = get_var('INCIDENT_ID');
     my $patch = get_var('INCIDENT_PATCH');
