@@ -116,14 +116,14 @@ sub add_test_repositories {
         zypper_call('--gpg-auto-import-keys ref', timeout => 1400, exitcode => [0, 106]);
     } else {
         for my $var (@repos) {
-            add_repo_if_not_present("$var", "TEST_$counter");
+            add_repo_if_not_present("$var" . "/?ssl_verify=no", "TEST_$counter");
             $counter++;
         }
     }
 
     # refresh repositories, inf 106 is accepted because repositories with test
     # can be removed before test start
-    zypper_call('ref', timeout => 1400, exitcode => [0, 106]);
+    zypper_call('--gpg-auto-import-keys ref', timeout => 1400, exitcode => [0, 106]);
 
     # return the count of repos-1 because counter is increased also on last cycle
     return --$counter;
@@ -214,6 +214,7 @@ sub get_patches {
 
     # Search for patches by incident, exclude not needed
     my $patches = script_output("zypper patches -r $repo");
+    diag 'Tina' . $patches;
     my @patch_list;
     my $status_col = ZYPPER_STATUS_COL;
 
@@ -222,9 +223,12 @@ sub get_patches {
     }
 
     for my $line (split /\n/, $patches) {
+	diag 'Tina'. $line;
         my @tokens = split /\s*\|\s*/, $line;
         next if $#tokens < max(ZYPPER_PACKAGE_COL, $status_col);
         my $packname = $tokens[ZYPPER_PACKAGE_COL];
+	diag 'Tina' . $packname;
+	diag 'Tina' . $incident_id;
         push @patch_list, $packname if $packname =~ m/$incident_id/ &&
           'needed' eq lc $tokens[$status_col];
     }
