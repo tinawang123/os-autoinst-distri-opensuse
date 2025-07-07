@@ -22,6 +22,7 @@ use qam;
 use testapi;
 use serial_terminal 'select_serial_terminal';
 use zypper;
+use version_utils qw(is_sle);
 
 sub run {
     my ($self) = @_;
@@ -38,7 +39,7 @@ sub run {
     zypper_call("ref");
 
     fully_patch_system;
-    capture_state('after', 1);
+    capture_state('after', 1) unless is_sle('>=16');
 
     power_action('reboot', textmode => 1);
     $self->wait_boot(bootloader_time => get_var('BOOTLOADER_TIMEOUT', 200));

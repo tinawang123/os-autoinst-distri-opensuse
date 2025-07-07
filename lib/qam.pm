@@ -123,7 +123,7 @@ sub add_test_repositories {
 
     # refresh repositories, inf 106 is accepted because repositories with test
     # can be removed before test start
-    zypper_call('ref', timeout => 1400, exitcode => [0, 106]);
+    zypper_call('--gpg-auto-import-keys ref', timeout => 1400, exitcode => [0, 106]);
 
     # return the count of repos-1 because counter is increased also on last cycle
     return --$counter;
