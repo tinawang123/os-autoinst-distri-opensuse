@@ -1,10 +1,11 @@
 # SUSE's openQA tests
 #
-# Copyright 2022 SUSE LLC
+# Copyright 2025 SUSE LLC
 # SPDX-License-Identifier: FSFAP
 #
 # Summary: Install glibc livepatch and run openposix testsuite
-# Maintainer: Martin Doucha <mdoucha@suse.cz>
+#          Use transactional-update command
+# Maintainer: qe-core <qe-core@suse.com>
 
 use strict;
 use warnings;
@@ -19,69 +20,12 @@ use OpenQA::Test::RunArgs;
 use version_utils;
 use package_utils;
 
-sub parse_incident_repo {
-    my $incident_id = get_required_var('INCIDENT_ID');
-    my $repo = get_required_var('INCIDENT_REPO');
-    my @repos = split(",", $repo);
-    my @repo_names;
-    my $packname;
-    my %ulp_tools = (
-        libpulp0 => 1,
-        'libpulp-tools' => 1,
-        'libpulp-load-default' => 1
-    );
-
-    while ((my ($i, $url)) = (each(@repos))) {
-        push @repo_names, "ULP_$i";
-        zypper_ar($url, name => $repo_names[$i]);
-    }
-
-    my $repo_args = join(' ', map({ "-r $_" } @repo_names));
-    my $packlist = zypper_search("-st package $repo_args");
-
-    if (grep { $$_{name} eq 'glibc-livepatches' } @$packlist) {
-        record_info('Livepatch tests', "Incident $incident_id contains userspace livepatches.");
-        $packname = 'glibc-livepatches';
-    }
-    elsif (grep { exists($ulp_tools{$$_{name}}) } @$packlist) {
-        record_info('Tools tests', "Incident $incident_id contains livepatching tools.");
-
-        my $patches = get_patches($incident_id, $repo);
-
-        die "Patch isn't needed" unless $patches;
-        $packname = 'openposix-livepatches';
-        $repo_args = '';
-
-        # Install the libpulp/tools update before running tests
-        zypper_call("in -l -t patch $patches", exitcode => [0, 102, 103],
-            log => 'zypper.log', timeout => 1400);
-    }
-    else {
-        # Incident has no userspace livepatch related packages, nothing to do
-        record_info('Exit', "Incident $incident_id contains no userspace livepatching related packages. Nothing to test.");
-        return undef;
-    }
-
-    return {packname => $packname, repo_args => $repo_args};
-}
-
 sub setup_ulp {
     my $packname = 'openposix-livepatches';
     my $repo_args = '';
 
-    install_klp_product if is_sle('<16');
-    #zypper_call('in libpulp0 libpulp-tools libpulp-load-default');
-    install_package('libpulp0 libpulp-tools');
-
-    if (get_var('INCIDENT_REPO')) {
-        my $repo_data = parse_incident_repo();
-        return undef unless $repo_data;
-
-        $packname = $repo_data->{packname};
-        $repo_args = $repo_data->{repo_args};
-    } else {
-        record_info('Tools tests', "No incident provided, testing lastest livepatching tools.");
-    }
+    install_klp_product;
+    install_package('in libpulp0 libpulp-tools');
 
     # Find glibc versions targeted by livepatch package
     my $provides = script_output("zypper -n info --provides $repo_args $packname");
@@ -123,12 +67,10 @@ sub run {
     # Schedule openposix tests and install the livepatch
     my $libver = $tinfo->{glibc_versions}[$tinfo->{run_id}];
     record_info('glibc version', $libver);
-    #zypper_call("in --oldpackage glibc-$libver");
     install_package("--oldpackage glibc-$libver");
     schedule_tests('openposix', "_glibc-$libver");
-    loadtest_kernel('ulp_threads', name => "ulp_threads_glibc-$libver",
-        run_args => $tinfo);
-    #zypper_call("in " . $tinfo->{packname});
+    #loadtest_kernel('ulp_threads', name => "ulp_threads_glibc-$libver",
+    #    run_args => $tinfo);
     install_package($tinfo->{packname});
 
     # Run tests again with the next untested glibc version
