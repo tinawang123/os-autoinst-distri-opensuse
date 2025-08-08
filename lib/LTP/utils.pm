@@ -337,13 +337,13 @@ sub schedule_tests {
         results => []};
     my $environment = prepare_whitelist_environment();
 
-    my $ver_linux_out = script_output("cat /tmp/ver_linux_before.txt");
-    if ($ver_linux_out =~ qr'^Linux C Library\s*>?\s*(.*?)\s*$'m) {
-        $environment->{libc} = $1;
-    }
-    if ($ver_linux_out =~ qr'^Gnu C\s*(.*?)\s*$'m) {
-        $environment->{gcc} = $1;
-    }
+    #my $ver_linux_out = script_output("cat /tmp/ver_linux_before.txt");
+    #if ($ver_linux_out =~ qr'^Linux C Library\s*>?\s*(.*?)\s*$'m) {
+    #    $environment->{libc} = $1;
+    #}
+    #if ($ver_linux_out =~ qr'^Gnu C\s*(.*?)\s*$'m) {
+    #    $environment->{gcc} = $1;
+    #}
 
     my $file = get_ltp_version_file();
     $environment->{kernel} = script_output('uname -r');

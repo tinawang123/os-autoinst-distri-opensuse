@@ -17,6 +17,7 @@ use qam;
 use LTP::utils;
 use OpenQA::Test::RunArgs;
 use version_utils;
+use package_utils;
 
 sub parse_incident_repo {
     my $incident_id = get_required_var('INCIDENT_ID');
@@ -69,7 +70,8 @@ sub setup_ulp {
     my $repo_args = '';
 
     install_klp_product if is_sle('<16');
-    zypper_call('in libpulp0 libpulp-tools libpulp-load-default');
+    #zypper_call('in libpulp0 libpulp-tools libpulp-load-default');
+    install_package('libpulp0 libpulp-tools', trup_reboot => 1);
 
     if (get_var('INCIDENT_REPO')) {
         my $repo_data = parse_incident_repo();
@@ -121,11 +123,13 @@ sub run {
     # Schedule openposix tests and install the livepatch
     my $libver = $tinfo->{glibc_versions}[$tinfo->{run_id}];
     record_info('glibc version', $libver);
-    zypper_call("in --oldpackage glibc-$libver");
+    #zypper_call("in --oldpackage glibc-$libver");
+    install_package("--oldpackage glibc-$libver", trup_reboot => 1);
     schedule_tests('openposix', "_glibc-$libver");
     loadtest_kernel('ulp_threads', name => "ulp_threads_glibc-$libver",
         run_args => $tinfo);
-    zypper_call("in " . $tinfo->{packname});
+    #zypper_call("in " . $tinfo->{packname});
+    install_package($tinfo->{packname});
 
     # Run tests again with the next untested glibc version
     if ($tinfo->{run_id} < $#{$tinfo->{glibc_versions}}) {
