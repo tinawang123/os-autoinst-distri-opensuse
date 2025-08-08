@@ -10,6 +10,7 @@ use strict;
 use warnings;
 use base 'opensusebasetest';
 use testapi;
+use version_utils 'is_transactional';
 
 sub run {
     my ($self, $tinfo) = @_;
@@ -18,8 +19,11 @@ sub run {
 
     my $threadcount = get_var('ULP_THREAD_COUNT', 1000);
     my $threadsleep = get_var('ULP_THREAD_SLEEP', 100);
-    my $livepatch_list = script_output("rpm -ql " . $tinfo->{packname});
+    #my $livepatch_list = script_output("rpm -ql " . $tinfo->{packname});
     assert_script_run('export LD_PRELOAD=/usr/lib64/libpulp.so.0');
+    my @livepatch_list;
+    @livepatch_list = split /\n/, script_output("rpm -ql " . $tinfo->{packname})
+      unless is_transactional;
 
     # Do not use background_script_run() here. The actual test runs inside
     # a subprocess and we need to read the target PID from test output.
@@ -38,10 +42,12 @@ sub run {
     die 'Failed to parse test PID' unless $parent =~ m/PID:(\d+)\./;
     $parent = $1;
 
-    for my $patch (split /\n/, $livepatch_list) {
+    #for my $patch (split /\n/, $livepatch_list) {
+    for my $patch (@livepatch_list) {
         assert_script_run("time ulp trigger -r 100 --timeout 200 '$patch'",
             timeout => 600) if $patch =~ m/\.so$/;
     }
+    #script_run("ulp trigger --recursive --timeout 200 '/var/livepatches/openposix-livepatches/*'");
 
     assert_script_run("kill -s USR1 $pid; wait $parent");
 }
