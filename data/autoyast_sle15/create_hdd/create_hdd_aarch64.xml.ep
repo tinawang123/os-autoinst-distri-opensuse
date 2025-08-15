@@ -456,6 +456,9 @@
   <timezone t="map">
     <timezone>America/New_York</timezone>
   </timezone>
+  <keyboard>
+    <keymap>us</keymap>
+  </keyboard>
   <user_defaults t="map">
     <expire/>
     <group>100</group>

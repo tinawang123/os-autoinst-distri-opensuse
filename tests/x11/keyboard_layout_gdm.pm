@@ -26,6 +26,7 @@ sub run {
 
     # login
     select_console('root-console');
+    script_run "cat /etc/vconsole.conf";
 
     # disable autologin
     assert_script_run "sed -i.bak '/^DISPLAYMANAGER_AUTOLOGIN=/s/=.*/=\"\"/' /etc/sysconfig/displaymanager";
@@ -33,6 +34,7 @@ sub run {
     # set german keyboard layout (y and z are switched on this layout)
     enter_cmd "echo \"test \\\$1 == qwerty && loadkeys us && echo done > /dev/$serialdev\" > $kbdlayout_script";
     assert_script_run "cat $kbdlayout_script";
+    script_run "chmod +x $kbdlayout_script";
     assert_script_run "yast keyboard set layout=german; echo";    # echo should produce clean bash prompt
 
     $self->reboot(setnologin => 1);
@@ -43,10 +45,15 @@ sub run {
     assert_screen 'gdm-user-querty', 60;
 
     # check console keyboard layout and restore autologin
+    reset_consoles();
     select_console('root-console', skip_set_standard_prompt => 1, skip_setterm => 1);
-    enter_cmd "bash $kbdlayout_script qwertz";
-    wait_serial 'done';
-    assert_script_run '$(exit $?)';
+    #enter_cmd "bash $kbdlayout_script qwertz";
+    #wait_serial 'done';
+    script_run "cat /etc/vconsole.conf";
+    assert_script_run "cat $kbdlayout_script";
+    my $out = script_output("bash $kbdlayout_script qwertz", timeout => 100);
+    diag 'Tina' . $out;
+    #assert_script_run '$(exit $?)';
     assert_script_run "mv /etc/sysconfig/displaymanager.bak /etc/sysconfig/displaymanager";
 
     # restore keyboard settings
