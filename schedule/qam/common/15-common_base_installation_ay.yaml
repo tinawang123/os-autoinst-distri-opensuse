@@ -7,6 +7,7 @@ schedule:
   - installation/first_boot
   - '{{x11_setup}}'
   - console/system_prepare
+  - console/zypper_lr 
   - qa_automation/patch_and_reboot
   - console/hostname
   - console/force_scheduled_tasks

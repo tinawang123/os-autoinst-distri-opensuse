@@ -85,6 +85,7 @@ sub run {
         record_info($cmd);
         assert_script_run("time $sudo $cmd -c2");
     }
+    record_info('rpm -qi iputils', script_output("$sudo rpm -qi iputils", proceed_on_failure => 1));
 
     # s390x ttl=0 bug
     # https://github.com/iputils/iputils/pull/591
