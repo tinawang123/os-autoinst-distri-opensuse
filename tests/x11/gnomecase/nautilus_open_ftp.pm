@@ -19,12 +19,13 @@ sub run {
     wait_screen_change { send_key 'ctrl-l' };
     enter_cmd "ftp://ftp.suse.com";
     assert_screen 'nautilus-ftp-login';
-    if (is_tumbleweed || is_sle('15-SP6+')) {
-        record_soft_failure("bsc#1205589 Enter key doesn't work on nautilus-ftp-login screen");
-        assert_and_click "nautilus-ftp-connect";
-    }
-    send_key 'ret';
-    assert_screen 'nautilus-ftp-suse-com';
+    #if (is_tumbleweed || is_sle('15-SP6+')) {
+    #    record_soft_failure("bsc#1205589 Enter key doesn't work on nautilus-ftp-login screen");
+    #    assert_and_click "nautilus-ftp-connect";
+    #}
+    #send_key 'ret';
+    #assert_screen 'nautilus-ftp-suse-com';
+    send_key_until_needlematch('nautilus-ftp-suse-com', 'ret', 6, 2);
     assert_and_click('ftp-path-selected', button => 'right');
     assert_screen 'nautilus-ftp-rightkey-menu';
     # unmount ftp
