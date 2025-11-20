@@ -33,6 +33,7 @@ sub check_lo_theme {
         assert_screen 'ooffice-menus-tools';
         send_key "o";
     }
+    send_key "super-up";
     assert_screen 'ooffice-tools-options';
     send_key_until_needlematch 'ooffice-tools-options-view', 'down', 6, 2;
     send_key "esc";
