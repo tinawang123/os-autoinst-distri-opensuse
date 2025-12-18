@@ -1,0 +1,8 @@
+name:           ulp_glib_ts
+description:    >
+    Maintainer: qe-core@suse.com
+schedule:
+  - microos/disk_boot
+  - transactional/host_config
+  - console/suseconnect_scc
+  - kernel/ulp_glibc_ts
