@@ -40,7 +40,7 @@ sub run {
     assert_script_run('rpmbuild -bc dracut.spec');
     if ($dracut_test) {
         assert_script_run("cd -- \$(find /usr/src/packages/BUILD/ -type d -name $dracut_test) && ll");
-        assert_script_run("make V=1 clean setup run |& tee /tmp/logs/$dracut_test.log", 600);
+        assert_script_run("make V=1 clean setup run |& tee /tmp/logs/$dracut_test.log", 1000);
     }
     else {
         my @tests = qw(TEST-01-BASIC TEST-02-SYSTEMD TEST-04-FULL-SYSTEMD TEST-10-RAID TEST-11-LVM TEST-17-LVM-THIN);
@@ -49,7 +49,7 @@ sub run {
         foreach (@tests) {
             assert_script_run("cd -- \$(find /usr/src/packages/BUILD/ -type d -name $_) && ll");
             record_info("$_", "$_");
-            assert_script_run("make V=1 clean setup run |& tee /tmp/logs/$_.log", 3000);
+            assert_script_run("make V=1 clean setup run |& tee /tmp/logs/$_.log", 1000);
         }
     }
     assert_script_run('tar -cjf dracut-testsuite-logs.tar.bz2 /tmp/logs', 600);
