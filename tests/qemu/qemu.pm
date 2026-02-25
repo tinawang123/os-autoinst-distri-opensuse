@@ -80,6 +80,8 @@ sub run {
         assert_script_run 'dd if=/dev/zero of=flash0.img bs=1M count=64';
         assert_script_run 'dd if=/usr/share/qemu/qemu-uefi-aarch64.bin of=flash0.img conv=notrunc';
         assert_script_run 'dd if=/dev/zero of=flash1.img bs=1M count=64';
+	my $out=script_output('rpm -q --changelog qemu');
+	diag 'Tina' . $out;
         enter_cmd "qemu-system-aarch64 -M virt,usb=off -cpu cortex-a57 -nographic -pflash flash0.img -pflash flash1.img";
         assert_screen([qw(qemu-enter-boot-manager qemu-uefi-shell)], 600);
         if (match_has_tag('qemu-enter-boot-manager')) {
