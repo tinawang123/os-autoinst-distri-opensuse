@@ -105,7 +105,7 @@ sub run {
     }
 
     record_info('Install LP', "Installing livepatch package: $packname");
-    install_package($packname);
+    install_package($packname, timeout => 800);
 
     # Get the list of livepatch files (.so) installed by the package.
     my $patch_files = script_output("rpm -ql $packname | grep '\\.so\$'");
