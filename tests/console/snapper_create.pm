@@ -40,6 +40,10 @@ sub run {
             push @snapper_cmd, "--userdata \"$description\"";
             assert_script_run(join ' ', @snapper_cmd);
             $first_snap_to_delete = $self->get_last_snap_number() unless ($first_snap_to_delete);
+	    #if (script_run("snapper list") ne 0)
+	    #{
+                script_run("umount -l /.snapshots");
+		#}
             assert_script_run("snapper list | tail -n1");
             for (1 .. 3) { pop @snapper_cmd; }
             if ($type eq 'pre') {
