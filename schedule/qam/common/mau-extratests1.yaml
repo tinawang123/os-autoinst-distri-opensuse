@@ -16,7 +16,6 @@ schedule:
   - console/man_pages
   - console/openvswitch
   - console/pam
-  - console/sshd
   - console/update_alternatives
   - console/rpm
   - console/slp
@@ -130,29 +129,22 @@ conditional_schedule:
   sle15:
     VERSION:
       '16.0':
-        - console/firewalld
         - console/lshw
         - console/dpdk
       15-SP7:
-        - console/firewalld
         - console/lshw
         - console/dpdk
       15-SP6:
-        - console/firewalld
         - console/lshw
         - console/dpdk
       15-SP5:
-        - console/firewalld
         - console/lshw
         - console/dpdk
       15-SP4:
-        - console/firewalld
         - console/lshw
       15-SP3:
-        - console/firewalld
         - console/lshw
       15-SP2:
-        - console/firewalld
         - console/lshw
   sssd_12SP5_arch_specific:
     ARCH:

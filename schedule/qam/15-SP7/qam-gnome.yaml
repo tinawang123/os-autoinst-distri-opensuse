@@ -17,27 +17,19 @@ schedule:
 - console/post_installation
 - console/system_prepare
 - console/check_network
-- console/system_state
 - console/prepare_test_data
 - console/consoletest_setup
 - locale/keymap_or_locale
-- console/textinfo
 - console/hostname
 - console/installation_snapshots
 - '{{console_tests}}'
 - console/zypper_lr
 - console/zypper_ref
-- console/ncurses
 - console/yast2_lan
 - console/curl_https
-- '{{salt}}'
 - console/zypper_in
 - console/yast2_i
 - console/yast2_bootloader
-- console/firewall_enabled
-- console/sshd
-- console/ssh_cleanup
-- console/mtab
 - console/zypper_lifecycle
 - console/orphaned_packages_check
 - console/consoletest_finish
@@ -65,13 +57,10 @@ conditional_schedule:
     ARCH:
       x86_64:
         - console/glibc_sanity
-  salt:
-    SLE_PRODUCT:
-      sles:
-        - console/salt
   sled_tests:
     SLE_PRODUCT:
       sled:
+        - x11/desktop_runner
         - x11/eog
         - x11/gnome_music
         - x11/wireshark
