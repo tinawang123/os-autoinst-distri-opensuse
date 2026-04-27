@@ -25,6 +25,8 @@ use registration qw(add_suseconnect_product get_addon_fullname register_product 
 use feature 'signatures';
 no warnings 'experimental::signatures';
 
+my $conf_dir = "/tmp/sssd_configs";
+
 sub install_dependencies($container_engine) {
     zypper_call("in sudo nscd") unless (is_tumbleweed || is_sle('>=16'));
     my $openldap2_client = is_sle('>=16') ? 'openldap2_6-client' : 'openldap2-client';
@@ -73,16 +75,39 @@ sub setup_389ds_container ($container_engine) {
     assert_script_run('ldapadd -x -H ldap://ldapserver -D "cn=Directory Manager" -w opensuse -f access.ldif');
 }
 
-sub configure_sssd_client ($container_engine) {
+sub configure_sssd_client ($container_engine, $run_as_user = 'root') {
 
     assert_script_run('mkdir -p /etc/sssd/');
     assert_script_run("$container_engine cp ds389_container:/etc/dirsrv/slapd-frist389/ca.crt /etc/sssd/ldapserver.crt");
-    assert_script_run("install --mode 0644 -D ./nsswitch.conf /etc/nsswitch.conf");
-    assert_script_run("install --mode 0600 -D ./sssd.conf /etc/sssd/sssd.conf");
-    assert_script_run("install --mode 0600 -D ./config ~/.ssh/config");
+    assert_script_run("install --mode 0644 -D $conf_dir/nsswitch.conf /etc/nsswitch.conf");
+    assert_script_run("install --mode 0600 -D $conf_dir/sssd.conf /etc/sssd/sssd.conf");
+    assert_script_run("install --mode 0600 -D $conf_dir/config ~/.ssh/config");
+
+    if ($run_as_user eq 'sssd') {
+        record_info('Config', 'Configuring SSSD to run as unprivileged user');
+        # Ensure files are owned by sssd user
+	assert_script_run("getent group sssd || groupadd -r sssd");
+        assert_script_run("getent passwd sssd || useradd -r -g sssd -d /var/lib/sss -s /sbin/nologin -c 'User for sssd' sssd");
+        record_info('Config', 'Configuring SSSD to run as unprivileged user');
+        assert_script_run("chown -R sssd:sssd /etc/sssd /var/lib/sss /var/log/sssd");
+	assert_script_run("chmod 0600 /etc/sssd/sssd.conf");
+        # Create systemd override
+        assert_script_run("mkdir -p /etc/systemd/system/sssd.service.d");
+        my $override = "[Service]\nUser=sssd\nGroup=sssd\nSupplementaryGroups=";
+        assert_script_run("echo -e \"$override\" > /etc/systemd/system/sssd.service.d/override.conf");
+    } else {
+        record_info('Config', 'Configuring SSSD to run as root');
+        # Ensure root ownership (or default)
+        assert_script_run("rm -f /etc/systemd/system/sssd.service.d/override.conf");
+        assert_script_run("chown -R root:root /etc/sssd");
+    }
+
+    systemctl("daemon-reload");
 
     systemctl("disable --now nscd.service") unless (is_sle('>=16') || is_tumbleweed);
-    systemctl("enable --now sssd.service");
+    #systemctl("enable --now sssd.service");
+    script_run("systemctl --no-pager enable --now sssd.service");
+    script_run("journalctl -u sssd --no-pager -n 20");
 }
 
 sub change_and_verify_password ($user, $old_pass, $new_pass) {
@@ -117,9 +142,30 @@ sub run ($self) {
     # SLE16.1 not yet has a Package Hub workarond
     zypper_ar(get_required_var('QA_HEAD_REPO'), name => 'qa_head', no_gpg_check => 1) if is_sle('>16.0');
 
+    assert_script_run("mkdir -p $conf_dir");
+    my @artifacts = qw(user_389.ldif access.ldif instance_389.inf sssd.conf nsswitch.conf config);
+    my $data_url = sprintf("sssd/398-ds/{%s}", join(',', @artifacts));
+    assert_script_run("curl -L --output-dir $conf_dir --remote-name-all " . data_url($data_url));
+
     install_dependencies($container_engine);
     setup_389ds_container($container_engine);
-    configure_sssd_client($container_engine);
+    my $out = script_output('sssd --help');
+    diag 'Tina' . $out;
+    for my $user_mode ('root', 'sssd') {
+        record_info("Test Mode", "Running functional tests as: $user_mode");
+        
+        configure_sssd_client($container_engine, $user_mode);
+        
+        # Identity verification
+        validate_script_output("id alice", sub { m/uid=9998\(alice\)/ });
+        assert_script_run("pam-config -a --sss --mkhomedir");
+
+        run_online_tests($container_engine);
+        run_offline_tests($container_engine);
+        
+        # Cleanup for next iteration
+        systemctl("stop sssd.service");
+    }
 
     #execute test cases
     #get remote user indentity

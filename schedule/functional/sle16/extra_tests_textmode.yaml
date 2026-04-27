@@ -28,6 +28,7 @@ schedule:
     - console/system_prepare
     - console/prepare_test_data
     - console/consoletest_setup
+    - console/sssd_389ds_functional
     - console/chrony
     - console/dnsmasq
     - console/man_pages
