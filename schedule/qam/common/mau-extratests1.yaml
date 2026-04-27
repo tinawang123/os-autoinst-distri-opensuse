@@ -7,6 +7,7 @@ schedule:
   - console/prepare_test_data
   - console/consoletest_setup
   - console/check_os_release
+  - console/sssd_389ds_functional
   - console/ping
   - console/arping
   - console/wireshark_cli
