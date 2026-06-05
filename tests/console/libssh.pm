@@ -152,4 +152,20 @@ EOF
     assert_script_run("docker stop libssh_container");
 }
 
+sub cleanup {
+    my ($self) = @_;
+    script_run("docker rm -f libssh_container");
+    zypper_call("rm -y libvirt-daemon libvirt-daemon-qemu qemu-kvm qemu-block-ssh");
+    script_run("rm -rf /tmp/test /tmp/build");
+}
+
+sub test_flags {
+    if (check_var('QEMU_DISABLE_SNAPSHOTS', '1')) {
+       cleanup;
+       return;
+    } else {
+       return always_rollback => 1;
+    }
+}
+
 1;
