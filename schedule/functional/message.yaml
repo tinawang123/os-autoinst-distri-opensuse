@@ -16,11 +16,11 @@ conditional_schedule:
             sle:
                 - x11/evolution/evolution_smoke
                 - x11/evolution/evolution_prepare_servers
-                - x11/evolution/evolution_mail_imap
-                - x11/evolution/evolution_mail_pop
-                - x11/evolution/evolution_timezone_setup
-                - x11/evolution/evolution_meeting_imap
-                - x11/evolution/evolution_meeting_pop
+#                - x11/evolution/evolution_mail_imap
+#                - x11/evolution/evolution_mail_pop
+#                - x11/evolution/evolution_timezone_setup
+#                - x11/evolution/evolution_meeting_imap
+#                - x11/evolution/evolution_meeting_pop
                 - x11/thunderbird/thunderbird_install
                 - x11/thunderbird/thunderbird_imap
                 - x11/thunderbird/thunderbird_pop

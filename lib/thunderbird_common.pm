@@ -51,16 +51,19 @@ sub tb_setup_account {
     if (check_screen 'thunderbird-new-gui') {
         $new_gui = 1;
         wait_still_screen(2, 4);
+        send_key 'ctrl-a';
         type_string "SUSE Test";
         send_key 'tab';
         wait_screen_change { type_string "$mail_box" };
         send_key 'tab';
-        wait_screen_change { type_string "$mail_passwd" };
-        wait_still_screen(2, 4);
-        send_key_until_needlematch('thunderbird_configure_manually', 'tab', 4, 1);
+#        wait_screen_change { type_string "$mail_passwd" };
+#        wait_still_screen(2, 4);
+	#send_key_until_needlematch('thunderbird_configure_manually', 'tab', 4, 1);
+	assert_and_click('thunderbird_configure_manually');
+	#send_key_until_needlematch('thunderbird_continue', 'tab', 4, 1);
         send_key 'spc';    # configure manually
         wait_still_screen(2, 4);
-        assert_and_click 'thunderbird_know-your-rights';
+	#assert_and_click 'thunderbird_know-your-rights';
     }
     else {
         send_key "alt-n";
@@ -128,30 +131,43 @@ sub tb_setup_account {
         }
         else {
             # get to the end of configutration options
-            for (1 .. 17) { send_key 'tab' }
-            assert_and_click 'thunderbird_startssl-selected-for-imap';
-            wait_still_screen(1);
-            assert_and_click 'thunderbird_security-select-none';
-            wait_still_screen(1);
-            assert_and_click 'thunderbird_startssl-selected-for-smtp';
-            wait_still_screen(1);
-            assert_and_click 'thunderbird_security-select-none';
-            if (check_screen 'thunderbird_username', 2) {
-                record_info 'bsc#1191853';
-                assert_and_click 'thunderbird_username';
-                send_key 'ctrl-a';
-                type_string 'admin';
-            }
-            send_key_until_needlematch 'thunderbird_wizard-retest', 'tab';
+	    $self->server_hostname_workaround;
+	    #for (1 .. 17) { send_key 'tab' }
+	    #assert_and_click 'thunderbird_startssl-selected-for-imap';
+	    #wait_still_screen(1);
+	    #assert_and_click 'thunderbird_security-select-none';
+	    #wait_still_screen(1);
+	    assert_and_click 'thunderbird_username';
+            send_key 'ctrl-a';
+            type_string 'admin';
+	    assert_and_click 'thunderbird_startssl-selected-for-imap';
+	    wait_still_screen(1);
+	    assert_and_click 'thunderbird_security-select-none';
+	    wait_still_screen(1);
+            assert_and_click('thunderbird_continue');
+            wait_still_screen(2, 4);
+	    $self->server_hostname_workaround;
+	    #assert_and_click 'thunderbird_startssl-selected-for-smtp';
+	    #wait_still_screen(1);
+	    #assert_and_click 'thunderbird_security-select-none';
+            assert_and_click 'thunderbird_username';
+            send_key 'ctrl-a';
+            type_string 'admin';
+	    assert_and_click 'thunderbird_startssl-selected-for-smtp';
+	    wait_still_screen(1);
+	    assert_and_click 'thunderbird_security-select-none';
+	    wait_still_screen(1);
+	    #send_key_until_needlematch 'thunderbird_wizard-retest', 'tab';
             assert_and_click 'thunderbird_wizard-retest';
-            send_key_until_needlematch 'thunderbird_wizard-done', 'tab', 16, 1;
-            assert_and_click 'thunderbird_wizard-done';
-            wait_still_screen(2);
-            send_key 'end';    # go to the bottom to see whole button and checkbox
-            wait_still_screen(2);
-            assert_and_click 'thunderbird_I-understand-the-risks';
-            assert_and_click 'thunderbird_I-understand-the-risks-confirm';
-            wait_still_screen(2);
+	    #send_key_until_needlematch 'thunderbird_wizard-done', 'tab', 16, 1;
+	    assert_and_click('thunderbird_continue');
+	    wait_still_screen(1);
+            assert_screen('thunderbird_password');
+	    wait_screen_change { type_string "$mail_passwd" };
+	    assert_and_click('thunderbird_continue');
+            wait_still_screen(1);
+	    #assert_and_click 'thunderbird_confirm_security_exception';
+	    #wait_still_screen(2);
             assert_and_click 'thunderbird_finish';
             # skip additional integrations
             assert_and_click "thunderbird_skip-system-integration" if check_screen 'thunderbird_skip-system-integration', 10;
@@ -256,8 +272,8 @@ sub server_hostname_workaround {
         # have to edit both hostnames
         assert_and_click 'thunderbird_in-hostname-start-with-dot';
         send_key 'delete';
-        for (1 .. 6) { send_key 'tab' }
-        assert_and_click 'thunderbird_out-hostname-start-with-dot';
-        send_key 'delete';
+	#  for (1 .. 6) { send_key 'tab' }
+	#assert_and_click 'thunderbird_out-hostname-start-with-dot';
+	#send_key 'delete';
     }
 }
