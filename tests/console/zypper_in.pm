@@ -57,9 +57,32 @@ sub run {
         assert_script_run 'export ZYPP_SINGLE_RPMTRANS=1';
 
         assert_script_run 'touch /preinstall_fail';
-        $r = script_run 'zypper -n in --allow-unsigned-rpm ' . data_url('zypper/hello0.rpm'), timeout => $timeout;
-        die "Unexpected zypper exit code $r - expected 8" unless (defined($r) && ($r == 8));
-        assert_script_run 'rm -f /preinstall_fail';
+	$r = script_run 'zypper -n in --allow-unsigned-rpm ' . data_url('zypper/hello0.rpm'), timeout => $timeout;
+	die "Unexpected zypper exit code $r - expected 8" unless (defined($r) && ($r == 8));
+	assert_script_run 'rm -f /preinstall_fail';
+
+	select_console 'root-console';
+        type_string "zypper -n in texlive\n";
+
+	wait_still_screen 5;
+        send_key 'ctrl-c';
+
+	wait_still_screen 2;
+        send_key 'ret';
+
+        zypper_call '-n in texlive';
+
+        zypper_call 'rm texlive';
+        assert_script_run '! rpm -q texlive';
+	select_serial_terminal;
+
+        # Resume installation and verify success
+        zypper_call "-n in --allow-unsigned-rpm " . data_url('zypper/hello0.rpm');
+        assert_script_run 'rpm -q hello0';
+
+        # Remove the installed package and verify removal
+        zypper_call "rm hello0";
+        assert_script_run '! rpm -q hello0';
 
         my $pkgs_to_install = "apache2";
         for ((1 .. 9)) {
