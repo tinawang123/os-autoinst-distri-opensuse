@@ -96,7 +96,10 @@ sub setup_openssl_test {
     $lp_versions{$_} = 1 for ($provides =~ m/^\s*lib(?:ssl|crypto)_([^()]+)_livepatch\d+\.so\(\)\([^)]+\)\s*$/gm);
 
     # Keep only versions that are available in repos
-    my @targeted_versions = grep { defined($available_versions{$_}) } keys %lp_versions;
+    my @filtered_versions = grep { defined($available_versions{$_}) } keys %lp_versions;
+    my @targeted_versions = sort { zypper_version_cmp($b, $a) } @filtered_versions;
+    my $out2 = script_output("echo @targeted_versions");
+    record_info('target version', $out2);
 
     if (scalar(@targeted_versions) == 0) {
         record_info('No Targets', "No livepatchable $legacy_pkg_suffix versions found based on $packname provides.");
@@ -146,8 +149,12 @@ sub run {
     # Force install the old package. Exit codes 106/107 indicate updates are available, which is expected.
     my $ssl_packs = zypper_search("-i $libpackage");
     my @downgrade_list = map { "$_->{name}=$target_ver" } @$ssl_packs;
+    my $out1 = script_output("echo @downgrade_list");
+    record_info('downgrade list', $out1);
     push @downgrade_list, "$legacy_pkg_suffix=$target_ver";
     install_package("--oldpackage --force-resolution " . join(' ', @downgrade_list), trup_continue => 1, trup_reboot => 1);
+    my $out = script_output("rpm -qa | grep openssl");
+    record_info('Installed packages', $out);
 
     # Start `openssl s_server` in the background. It's a long-running process that links with libssl/libcrypto.
     my $server_pid = background_script_run("$command s_server -cert cert.pem -key key.pem -pass pass:password -accept 44330 -www");
