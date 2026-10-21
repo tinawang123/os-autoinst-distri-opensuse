@@ -45,9 +45,9 @@ sub tomcat_setup() {
     quit_packagekit if is_sle;
 
     my $tomcat = 'tomcat' . $version;
-    install_package("$tomcat ${tomcat}-webapps ${tomcat}-admin-webapps", trup_reboot => 1);
+    install_package("$tomcat ${tomcat}-webapps ${tomcat}-admin-webapps", trup_apply => 1);
     # tomcat10/11 are compiled to use libtcnative-2-0
-    install_package('libtcnative-2-0', trup_reboot => 1) if (check_var('TOMCAT_VER', '10') || check_var('TOMCAT_VER', '11'));
+    install_package('libtcnative-2-0', trup_apply => 1) if (check_var('TOMCAT_VER', '10') || check_var('TOMCAT_VER', '11'));
     assert_script_run("rpm -q $tomcat");
     record_info("libtcnative installations", script_output('rpm -q libtcnative-1-0 libtcnative-2-0', proceed_on_failure => 1));
 

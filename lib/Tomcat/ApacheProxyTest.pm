@@ -21,7 +21,7 @@ sub mod_proxy_setup() {
     select_serial_terminal();
 
     record_info('install and configure apache2 proxy');
-    install_package('apache2', trup_reboot => 1);
+    install_package('apache2', trup_apply => 1);
     script_output(
         "echo  \"\$(cat <<EOF
 <VirtualHost *:80>
