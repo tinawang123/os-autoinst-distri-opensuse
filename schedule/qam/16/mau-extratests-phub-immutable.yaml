@@ -1,0 +1,16 @@
+---
+name: mau-extratests-phub
+schedule:
+  - installation/bootloader_start
+  - boot/boot_to_desktop
+  - console/prepare_test_data
+  - console/consoletest_setup
+  - console/add_phub_extension
+  - console/libjpeg_turbo
+  - console/vmstat
+  - console/systemd_rpm_macros
+  - console/apache2_php_fpm
+  #- console/stalld
+  - console/libvorbis
+  - console/coredump_collect
+...
