@@ -83,6 +83,8 @@ sub tomcat_setup() {
         assert_script_run('chmod 600 /etc/tomcat/localhost.key');
         assert_script_run('chmod 644 /etc/tomcat/localhost.crt');
         systemctl('restart tomcat');
+	systemctl('status tomcat');
+	script_run('journalctl -u tomcat.service');
         # check that tomcat is listening on port 8443
         assert_script_run('lsof -i :8443 | grep tomcat');
     }
