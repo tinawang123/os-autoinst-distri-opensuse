@@ -16,7 +16,8 @@ use version_utils qw(is_sle is_sle_micro);
 use registration qw(skip_registration assert_registration_screen_present fill_in_registration_data verify_scc investigate_log_empty_license);
 
 sub run {
-    return record_info('Skip reg.', 'SCC registration is not required in media based upgrade since SLE15') if (is_sle('15+') && get_var('MEDIA_UPGRADE'));
+    #return record_info('Skip reg.', 'SCC registration is not required in media based upgrade since SLE15') if (is_sle('15+') && get_var('MEDIA_UPGRADE'));
+    return record_info('Skip reg.', 'SCC registration is not required in media based upgrade since SLE15') if (check_var('SCC_REGISTER', 'skip'));
     if (check_var('SCC_REGISTER', 'installation') || (check_var('REGISTER', 'installation'))) {
         record_info('SCC reg.', 'SCC registration');
         assert_registration_screen_present();
